@@ -1,0 +1,14 @@
+{
+  "name": "almosafer-test",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "cypress:test-headless": "cypress run --browser chrome --headless",
+    "cypress:gui": "cypress run --browser chrome --no-exit"
+  },
+  "author": "Fadi Razouk",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "8.7.0"
+  }
+}

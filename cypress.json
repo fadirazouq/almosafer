@@ -1,0 +1,13 @@
+{
+    "baseUrl":"https://www.almosafer.com",
+    "defaultCommandTimeout": 20000,
+    "fixturesFolder": "cypress/fixtures",
+    "integrationFolder": "cypress/integration",
+    "pluginsFile": "cypress/plugins",
+    "retries": 3,
+    "screenshotOnRunFailure":false,
+    "supportFile": "cypress/support",
+    "video": false,
+    "viewportWidth": 1800,
+    "viewportHeight": 1300
+}
