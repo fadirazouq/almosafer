@@ -51,7 +51,3 @@ A step by step series of examples that tell you how to run tests with a gui.
 > cd almosafer
 /almosafer > docker run -it -v $PWD:/e2e -w /e2e  cypress/included:4.1.0
 ```
-
-####  So you don`t even want to run to code ? that is covered too:+1:
-- You can take a look at the latest travisCI build as it is triggered each time a new change have been made, or on each pull request as a part of CI/CD cycle it runes all the tests and shows you a summary of what is going on.
-TBD
