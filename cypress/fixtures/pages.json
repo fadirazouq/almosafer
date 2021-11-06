@@ -2,6 +2,7 @@
   "searchPage": {
     "listEndpoint": "api/system/currency/list",
     "headerInArabic": "معك لحجز إقامتك الفندقية",
-    "headerInEnglish": "Let’s book your next trip!"
+    "headerInEnglish": "Let’s book your next trip!",
+    "searchInputLabel":"Search for hotels or places"
   }
 }

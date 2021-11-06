@@ -16,7 +16,6 @@ describe("Checking the functionality of search and filtering on almosafer websit
       pages.searchPage.headerInArabic
     );
   });
-
   it("Should be able to change the language and to check the header in English, @ID: 02", () => {
     cy.get(searchPage.switchLanguageButton).click();
     cy.url().should("include", "/en");
@@ -25,15 +24,46 @@ describe("Checking the functionality of search and filtering on almosafer websit
       pages.searchPage.headerInEnglish
     );
   });
+  it("Should be able to change the currency to AED, @ID: 03", () => {
+    cy.get(searchPage.switchLanguageButton).click();
+    cy.get(searchPage.currencySelector).should("have.text", "SAR ");
+    cy.get(searchPage.currencySelector).click();
+    cy.get(searchPage.currencyAED).click();
+    cy.get(searchPage.currencySelector).should("have.text", "AED ");
+  });
 
-  it("Should be able to select a random location and pick the first option then search, @ID: 03", () => {
+  it("Should be able to select flight and hotel tabs from navbar and see the change in URL, @ID: 04", () => {
+    cy.get(searchPage.switchLanguageButton).click();
+    cy.get(searchPage.hotelNavbarTab)
+      .should("have.attr", "href", "/en/hotels-home")
+      .click();
+    cy.url().should("include", "/hotels-home");
+    cy.get(searchPage.locationInput).should(
+      "have.attr",
+      "placeholder",
+      pages.searchPage.searchInputLabel
+    );
+    cy.get(searchPage.flightNavbarTab)
+      .should("have.attr", "href", "/en/flights-home")
+      .click();
+    cy.get(searchPage.roundTripButton).should("be.visible");
+    cy.url().should("include", "/flights-home");
+  });
+
+  it("Should be able to check the hotel tab is selected by default, @ID: 05", () => {
+    cy.get(searchPage.switchLanguageButton).click();
+    cy.url().should("include", "/en");
+    cy.get(searchPage.hotelTab).should("have.attr", "aria-selected", "true");
+  });
+
+  it("Should be able to select a random location and pick the first option then search, @ID: 06", () => {
     const randomLocation = utils.getRandomLocation();
     const dates = utils.randomDate();
     utils.searchForHotels(randomLocation, dates);
     cy.contains(`properties found in ${randomLocation}`);
   });
 
-  it("Should be able to check the loading bar text, @ID: 04", () => {
+  it("Should be able to check the loading bar text, @ID: 07", () => {
     const randomLocation = utils.getRandomLocation();
     const dates = utils.randomDate();
     utils.searchForHotels(randomLocation, dates);
@@ -44,7 +74,7 @@ describe("Checking the functionality of search and filtering on almosafer websit
     cy.contains(`properties found in ${randomLocation}`);
   });
 
-  it("Should be able to check the url that it includes our search criteria @ID: 05", () => {
+  it("Should be able to check the url that it includes our search criteria @ID: 08", () => {
     const randomLocation = utils.getRandomLocation();
     const dates = utils.randomDate();
     utils.searchForHotels(randomLocation, dates);
@@ -52,7 +82,7 @@ describe("Checking the functionality of search and filtering on almosafer websit
     cy.url().should("include", "1_adult");
   });
 
-  it("Should be able to sort by lowest price and check the sort functionally , @ID: 06", () => {
+  it("Should be able to sort by lowest price and check the sort functionally , @ID: 09", () => {
     const randomLocation = utils.getRandomLocation();
     const dates = utils.randomDate();
     utils.searchForHotels(randomLocation, dates);
@@ -66,7 +96,7 @@ describe("Checking the functionality of search and filtering on almosafer websit
     });
   });
 
-  it("Should be able to check the functionally of free cancellation filter, @ID: 07", () => {
+  it("Should be able to check the functionally of free cancellation filter, @ID: 10", () => {
     const randomLocation = utils.getRandomLocation();
     const dates = utils.randomDate(6, 8);
     utils.searchForHotels(randomLocation, dates);
@@ -76,79 +106,94 @@ describe("Checking the functionality of search and filtering on almosafer websit
     });
     cy.get("@AllFreeCancellationLabels").then((AllFreeCancellationLabels) => {
       cy.get(resultPage.hotelCard).then((allHotelsCards) => {
-        expect(allHotelsCards.length).to.equal(AllFreeCancellationLabels.length);
+        expect(allHotelsCards.length).to.equal(
+          AllFreeCancellationLabels.length
+        );
       });
     });
   });
 
-  it("Should be able to check the functionally of total stay price is equal to individual day price, @ID: 08", () => {
+  it("Should be able to check the functionally of total stay price is equal to individual day price, @ID: 11", () => {
     const randomLocation = utils.getRandomLocation();
     const dates = utils.randomDate(6, 8);
     utils.searchForHotels(randomLocation, dates);
-    cy.get(resultPage.allPriceTags).eq(0).invoke('text').then((price) => {
-      cy.wrap(price).as("totalPrice");
-    })
-    cy.get('#pernight').click({ force: true});
-    cy.get('@totalPrice').then((totalPrice) => {
-      cy.get(resultPage.allPriceTags).eq(0).invoke('text').then((pricePerNight) => {
-        expect(Number(pricePerNight)*2).to.be.closeTo(Number(totalPrice), 1);
-      })
-    })
+    cy.get(resultPage.allPriceTags)
+      .eq(0)
+      .invoke("text")
+      .then((price) => {
+        cy.wrap(price).as("totalPrice");
+      });
+    cy.get("#pernight").click({ force: true });
+    cy.get("@totalPrice").then((totalPrice) => {
+      cy.get(resultPage.allPriceTags)
+        .eq(0)
+        .invoke("text")
+        .then((pricePerNight) => {
+          expect(Number(pricePerNight) * 2).to.be.closeTo(
+            Number(totalPrice),
+            1
+          );
+        });
+    });
   });
 
-  it.only("Should be able to check the that all the locations in the result are related to the search criteria @ID: 09", () => {
+  it("Should be able to check the that all the locations in the result are related to the search criteria @ID: 12", () => {
     const randomLocation = utils.getRandomLocation(0);
     const dates = utils.randomDate();
     utils.searchForHotels(randomLocation, dates);
     cy.get(resultPage.hotelAddress).then((els) => {
-      [...els].forEach((el) => cy.get(el).should('contain',randomLocation));
+      [...els].forEach((el) => cy.get(el).should("contain", randomLocation));
     });
   });
 
-
-  it("Should be able to check the functionally of star rating, @ID: 10", () => {
+  it("Should be able to check the functionally of star rating, @ID: 13", () => {
     const randomLocation = utils.getRandomLocation(0);
     const dates = utils.randomDate();
     utils.searchForHotels(randomLocation, dates);
-    cy.get(resultPage.starRatingFilter('2')).click()
-    cy.get(resultPage.activeStars).should('have.length', 120)
+    cy.get(resultPage.starRatingFilter("2")).click();
+    cy.get(resultPage.activeStars).should("have.length", 120);
     cy.url().should("include", "STAR_RATING=3");
-    cy.contains('Reset').click()
-    cy.get(resultPage.starRatingFilter('1')).click()
-    cy.get(resultPage.activeStars).should('have.length', 160)
+    cy.contains("Reset").click();
+    cy.get(resultPage.starRatingFilter("1")).click();
+    cy.get(resultPage.activeStars).should("have.length", 160);
     cy.url().should("include", "STAR_RATING=4");
-    cy.contains('Reset').click()
-    cy.get(resultPage.starRatingFilter('0')).click()
+    cy.contains("Reset").click();
+    cy.get(resultPage.starRatingFilter("0")).click();
     cy.url().should("include", "STAR_RATING=5");
-    cy.get(resultPage.activeStars).should('have.length', 200)
+    cy.get(resultPage.activeStars).should("have.length", 200);
   });
 
-  it("Should be able to check the 'Good for shoppers' label shows in every hotel card, @ID: 11", () => {
+  it("Should be able to check the 'Good for shoppers' label shows in every hotel card, @ID: 14", () => {
     const randomLocation = utils.getRandomLocation();
     const dates = utils.randomDate(6, 8);
     utils.searchForHotels(randomLocation, dates);
-    cy.contains('Good for shoppers').click({ force: true})
+    cy.contains("Good for shoppers").click({ force: true });
     cy.url().should("include", "TOP_PICK=Good%20for%20shoppers");
     cy.get(resultPage.goodForShoppersLabels).then((label) => {
       cy.wrap(label).as("AllGoodForShoppersLabels");
     });
     cy.get("@AllGoodForShoppersLabels").then((AllGoodForShoppersLabels) => {
-      cy.get(resultPage.hotelCard).should('have.length', AllGoodForShoppersLabels.length)
+      cy.get(resultPage.hotelCard).should(
+        "have.length",
+        AllGoodForShoppersLabels.length
+      );
     });
   });
 
-  it("Should be able to check the 'Luxury stay' label shows in every hotel card, @ID: 12", () => {
+  it("Should be able to check the 'Luxury stay' label shows in every hotel card, @ID: 15", () => {
     const randomLocation = utils.getRandomLocation();
     const dates = utils.randomDate(6, 8);
     utils.searchForHotels(randomLocation, dates);
-    cy.contains('Luxury stay').click({ force: true})
+    cy.contains("Luxury stay").click({ force: true });
     cy.url().should("include", "TOP_PICK=Luxury%20stay");
     cy.get(resultPage.luxuryStayLabels).then((label) => {
       cy.wrap(label).as("luxuryStayLabelsLabels");
     });
     cy.get("@luxuryStayLabelsLabels").then((luxuryStayLabelsLabels) => {
-      cy.get(resultPage.hotelCard).should('have.length', luxuryStayLabelsLabels.length)
+      cy.get(resultPage.hotelCard).should(
+        "have.length",
+        luxuryStayLabelsLabels.length
+      );
     });
   });
 });
-
