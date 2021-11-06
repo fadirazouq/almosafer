@@ -1,14 +1,11 @@
 language: node_js
 node_js:
   - 14
-addons:
-  apt:
-    packages:
-    - libgconf-2-4
-cache: 
-
+cache:
+  npm: true
   directories:
-    - ~/.npm
     - ~/.cache
+install:
+  - npm ci
 script:
   - npm run cypress:test-headless
