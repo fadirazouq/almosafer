@@ -93,6 +93,7 @@ export class Utils {
     cy.get(searchPage.getLabel(dates.checkOut)).click();
     cy.get(searchPage.numberOfPeople).select("1 Room, 1 Adult, 0 Children");
     cy.get(searchPage.searchButton).click();
+    cy.get('[data-testid="HotelSearchResult__resultsFoundCount"]').should('be.visible');
   };
 }
 

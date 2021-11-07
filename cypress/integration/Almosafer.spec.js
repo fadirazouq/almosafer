@@ -101,20 +101,30 @@ describe("Checking the functionality of search and filtering on almosafer websit
     const dates = utils.randomDate(6, 8);
     utils.searchForHotels(randomLocation, dates);
     cy.get(resultPage.freeCancellationCheck).click({ force: true });
-    cy.get(resultPage.freeCancellationLabel).then((label) => {
-      cy.wrap(label).as("AllFreeCancellationLabels");
-    });
-    cy.get("@AllFreeCancellationLabels").then((AllFreeCancellationLabels) => {
-      cy.get(resultPage.hotelCard).then((allHotelsCards) => {
-        expect(allHotelsCards.length).to.equal(
-          AllFreeCancellationLabels.length
-        );
-      });
+    cy.get("body").then(($body) => {
+      if ($body.find(resultPage.missingDeal).length > 0) {
+        cy.get(resultPage.missingDeal).then((missingDeal) => {
+          cy.get(resultPage.freeCancellationLabel).then((label) => {
+            cy.wrap(label).as("AllFreeCancellationLabels");
+          });
+          cy.get("@AllFreeCancellationLabels").then((AllFreeCancellationLabels) => {
+            cy.get(resultPage.hotelCard).should('have.length',AllFreeCancellationLabels.length+missingDeal.length)
+          });
+        });
+      } else {
+        cy.get(resultPage.freeCancellationLabel).then((label) => {
+          cy.wrap(label).as("AllFreeCancellationLabels");
+        });
+        cy.get("@AllFreeCancellationLabels").then((AllFreeCancellationLabels) => {
+          cy.get(resultPage.hotelCard).should('have.length',AllFreeCancellationLabels.length )
+        });
+      }
     });
   });
 
   it("Should be able to check the functionally of total stay price is equal to individual day price, @ID: 11", () => {
     const randomLocation = utils.getRandomLocation();
+    // here we set the date of the check in 2 days apart from the check out in order for us to calculate the price per night.
     const dates = utils.randomDate(6, 8);
     utils.searchForHotels(randomLocation, dates);
     cy.get(resultPage.allPriceTags)
@@ -129,8 +139,8 @@ describe("Checking the functionality of search and filtering on almosafer websit
         .eq(0)
         .invoke("text")
         .then((pricePerNight) => {
-          expect(Number(pricePerNight) * 2).to.be.closeTo(
-            Number(totalPrice),
+          expect(Number(pricePerNight.split(",").join("")) * 2).to.be.closeTo(
+            Number(totalPrice.split(",").join("")),
             1
           );
         });
@@ -148,7 +158,7 @@ describe("Checking the functionality of search and filtering on almosafer websit
 
   it("Should be able to check the functionally of star rating, @ID: 13", () => {
     const randomLocation = utils.getRandomLocation(0);
-    const dates = utils.randomDate();
+    const dates = utils.randomDate(10, 12);
     utils.searchForHotels(randomLocation, dates);
     cy.get(resultPage.starRatingFilter("2")).click();
     cy.get(resultPage.activeStars).should("have.length", 120);
@@ -165,35 +175,69 @@ describe("Checking the functionality of search and filtering on almosafer websit
 
   it("Should be able to check the 'Good for shoppers' label shows in every hotel card, @ID: 14", () => {
     const randomLocation = utils.getRandomLocation();
-    const dates = utils.randomDate(6, 8);
+    const dates = utils.randomDate(10, 14);
     utils.searchForHotels(randomLocation, dates);
     cy.contains("Good for shoppers").click({ force: true });
     cy.url().should("include", "TOP_PICK=Good%20for%20shoppers");
-    cy.get(resultPage.goodForShoppersLabels).then((label) => {
-      cy.wrap(label).as("AllGoodForShoppersLabels");
-    });
-    cy.get("@AllGoodForShoppersLabels").then((AllGoodForShoppersLabels) => {
-      cy.get(resultPage.hotelCard).should(
-        "have.length",
-        AllGoodForShoppersLabels.length
-      );
+    cy.get("body").then(($body) => {
+      if ($body.find(resultPage.missingDeal).length > 0) {
+        cy.get(resultPage.missingDeal).then((missingDeal) => {
+          cy.get(resultPage.goodForShoppersLabels).then((label) => {
+            cy.wrap(label).as("AllGoodForShoppersLabels");
+          });
+          cy.get("@AllGoodForShoppersLabels").then(
+            (AllGoodForShoppersLabels) => {
+              cy.get(resultPage.hotelCard).should(
+                "have.length",
+                AllGoodForShoppersLabels.length + missingDeal.length
+              );
+            }
+          );
+        });
+      } else {
+        cy.get(resultPage.goodForShoppersLabels).then((label) => {
+          cy.wrap(label).as("AllGoodForShoppersLabels");
+        });
+        cy.get("@AllGoodForShoppersLabels").then((AllGoodForShoppersLabels) => {
+          cy.get(resultPage.hotelCard).should(
+            "have.length",
+            AllGoodForShoppersLabels.length
+          );
+        });
+      }
     });
   });
 
   it("Should be able to check the 'Luxury stay' label shows in every hotel card, @ID: 15", () => {
-    const randomLocation = utils.getRandomLocation();
+    const randomLocation = utils.getRandomLocation(1);
     const dates = utils.randomDate(6, 8);
     utils.searchForHotels(randomLocation, dates);
     cy.contains("Luxury stay").click({ force: true });
     cy.url().should("include", "TOP_PICK=Luxury%20stay");
-    cy.get(resultPage.luxuryStayLabels).then((label) => {
-      cy.wrap(label).as("luxuryStayLabelsLabels");
-    });
-    cy.get("@luxuryStayLabelsLabels").then((luxuryStayLabelsLabels) => {
-      cy.get(resultPage.hotelCard).should(
-        "have.length",
-        luxuryStayLabelsLabels.length
-      );
+    cy.get("body").then(($body) => {
+      if ($body.find(resultPage.missingDeal).length > 0) {
+        cy.get(resultPage.missingDeal).then((missingDeal) => {
+          cy.get(resultPage.luxuryStayLabels).then((label) => {
+            cy.wrap(label).as("luxuryStayLabelsLabels");
+          });
+          cy.get("@luxuryStayLabelsLabels").then((luxuryStayLabelsLabels) => {
+            cy.get(resultPage.hotelCard).should(
+              "have.length",
+              luxuryStayLabelsLabels.length + missingDeal.length
+            );
+          });
+        });
+      } else {
+        cy.get(resultPage.luxuryStayLabels).then((label) => {
+          cy.wrap(label).as("luxuryStayLabelsLabels");
+        });
+        cy.get("@luxuryStayLabelsLabels").then((luxuryStayLabelsLabels) => {
+          cy.get(resultPage.hotelCard).should(
+            "have.length",
+            luxuryStayLabelsLabels.length
+          );
+        });
+      }
     });
   });
 });

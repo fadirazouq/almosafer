@@ -25,6 +25,7 @@ export default {
     freeCancellationCheck:'[data-testid="HotelSearchResult__filters__popularFilters__0"]',
     freeCancellationLabel:'[data-testid$="freeCancellationLabel"]',
     goodForShoppersLabels:'[src$="good_shoppers.png"]',
+    missingDeal:'[data-testid$=missedDeal]',
     hotelAddress:'[data-testid$="address"]',
     hotelCard:'[id^="hotelCard"]',
     lowestPriceSort:'[data-testid="HotelSearchResult__sort__LOWEST_PRICE"]',
